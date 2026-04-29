@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tic Tac Toe</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&display=swap');
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -17,140 +19,371 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: #1a1a2e;
-      font-family: 'Segoe UI', sans-serif;
+      background: #0d0d1a;
+      font-family: 'Rajdhani', sans-serif;
       color: #eee;
+      overflow: hidden;
+    }
+
+    /* Animated starfield background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(120, 40, 200, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 180, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(255, 60, 120, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 85%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.3) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.1em;
-      color: #e94560;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 1.8rem;
+      letter-spacing: 0.15em;
+      background: linear-gradient(135deg, #ff4d8d, #7b2fff, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 20px rgba(123, 47, 255, 0.5));
+      animation: titlePulse 3s ease-in-out infinite;
     }
 
+    @keyframes titlePulse {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(123, 47, 255, 0.5)); }
+      50% { filter: drop-shadow(0 0 35px rgba(0, 212, 255, 0.7)); }
+    }
+
+    /* Score board */
+    #score {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+
+    .score-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.8rem 1.4rem;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+      min-width: 80px;
+      transition: transform 0.2s;
+    }
+
+    .score-card:hover { transform: translateY(-2px); }
+
+    .score-card.x-card {
+      background: linear-gradient(135deg, rgba(255, 60, 100, 0.2), rgba(255, 60, 100, 0.05));
+      border-color: rgba(255, 60, 100, 0.3);
+      box-shadow: 0 4px 20px rgba(255, 60, 100, 0.15);
+    }
+
+    .score-card.draw-card {
+      background: linear-gradient(135deg, rgba(150, 150, 200, 0.15), rgba(150, 150, 200, 0.05));
+      border-color: rgba(150, 150, 200, 0.25);
+      box-shadow: 0 4px 20px rgba(150, 150, 200, 0.1);
+    }
+
+    .score-card.o-card {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+    }
+
+    .score-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .score-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .x-card .score-label { color: #ff3c64; }
+    .x-card .score-value { color: #ff3c64; }
+    .draw-card .score-label { color: #aab; }
+    .draw-card .score-value { color: #aab; }
+    .o-card .score-label { color: #00d4ff; }
+    .o-card .score-value { color: #00d4ff; }
+
+    .score-vs {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.1em;
+    }
+
+    /* Status */
     #status {
-      font-size: 1.2rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
       margin-bottom: 1.5rem;
       min-height: 1.5em;
-      color: #a8dadc;
+      letter-spacing: 0.08em;
+      transition: all 0.3s ease;
     }
 
+    #status.x-turn { color: #ff3c64; text-shadow: 0 0 12px rgba(255, 60, 100, 0.6); }
+    #status.o-turn { color: #00d4ff; text-shadow: 0 0 12px rgba(0, 212, 255, 0.6); }
+    #status.win    { color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); animation: winFlash 0.6s ease; }
+    #status.draw   { color: #aab; }
+
+    @keyframes winFlash {
+      0%   { transform: scale(0.8); opacity: 0; }
+      60%  { transform: scale(1.1); }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+
+    /* Board */
     #board {
       display: grid;
       grid-template-columns: repeat(3, 120px);
       grid-template-rows: repeat(3, 120px);
-      gap: 8px;
+      gap: 10px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 8px 40px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .cell {
-      background: #16213e;
-      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
-      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s, border-color 0.2s;
       user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .cell:hover:not(.taken)::before {
+      opacity: 1;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.07), transparent 70%);
     }
 
     .cell:hover:not(.taken) {
-      background: #0f3460;
-      transform: scale(1.05);
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+      border-color: rgba(255,255,255,0.18);
+      transform: scale(1.04);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
 
     .cell.x {
-      color: #e94560;
+      color: #ff3c64;
+      background: linear-gradient(135deg, rgba(255, 60, 100, 0.15), rgba(255, 60, 100, 0.04));
+      border-color: rgba(255, 60, 100, 0.35);
+      box-shadow: 0 0 20px rgba(255, 60, 100, 0.2), inset 0 0 20px rgba(255, 60, 100, 0.05);
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .cell.o {
-      color: #a8dadc;
+      color: #00d4ff;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.04));
+      border-color: rgba(0, 212, 255, 0.35);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.05);
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .cell.win {
-      background: #0f3460;
-      box-shadow: 0 0 16px 4px rgba(168, 218, 220, 0.4);
+    @keyframes popIn {
+      0%   { transform: scale(0.4) rotate(-10deg); opacity: 0; }
+      100% { transform: scale(1)   rotate(0deg);   opacity: 1; }
     }
 
+    .cell.win.x {
+      background: linear-gradient(135deg, rgba(255, 60, 100, 0.3), rgba(255, 60, 100, 0.12));
+      border-color: rgba(255, 60, 100, 0.7);
+      box-shadow: 0 0 30px rgba(255, 60, 100, 0.5), inset 0 0 30px rgba(255, 60, 100, 0.1);
+      animation: winCellPulse 1s ease-in-out infinite;
+    }
+
+    .cell.win.o {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.12));
+      border-color: rgba(0, 212, 255, 0.7);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), inset 0 0 30px rgba(0, 212, 255, 0.1);
+      animation: winCellPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes winCellPulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.06); }
+    }
+
+    /* Restart button */
     #restart {
-      margin-top: 2rem;
-      padding: 0.75rem 2.5rem;
-      font-size: 1rem;
-      background: #e94560;
+      margin-top: 1.8rem;
+      padding: 0.8rem 2.8rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #7b2fff, #ff3c64);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 50px;
       cursor: pointer;
-      letter-spacing: 0.05em;
-      transition: background 0.15s, transform 0.1s;
+      transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+      box-shadow: 0 4px 20px rgba(123, 47, 255, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #restart::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      border-radius: inherit;
     }
 
     #restart:hover {
-      background: #c73652;
-      transform: scale(1.05);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 8px 30px rgba(123, 47, 255, 0.6);
+      filter: brightness(1.1);
     }
 
-    #score {
-      display: flex;
-      gap: 2rem;
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      color: #aaa;
+    #restart:active {
+      transform: scale(0.97);
     }
 
-    #score span {
+    /* Turn indicator dots */
+    .turn-indicators {
       display: flex;
-      flex-direction: column;
+      gap: 0.5rem;
       align-items: center;
-      gap: 0.2rem;
+      margin-bottom: 1.2rem;
     }
 
-    #score .label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+    .turn-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
     }
 
-    #score .x-score { color: #e94560; font-size: 1.4rem; font-weight: bold; }
-    #score .o-score { color: #a8dadc; font-size: 1.4rem; font-weight: bold; }
-    #score .draw-score { color: #aaa; font-size: 1.4rem; font-weight: bold; }
+    .turn-dot.x-dot {
+      background: #ff3c64;
+      box-shadow: 0 0 8px rgba(255, 60, 100, 0.6);
+    }
+
+    .turn-dot.o-dot {
+      background: #00d4ff;
+      box-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+    }
+
+    .turn-dot.inactive {
+      opacity: 0.2;
+      box-shadow: none;
+    }
+
+    .turn-dot.active {
+      transform: scale(1.4);
+    }
   </style>
 </head>
 <body>
-  <h1>Tic Tac Toe</h1>
+  <div class="container">
+    <h1>Tic Tac Toe</h1>
 
-  <div id="score">
-    <span>
-      <div class="label">X Wins</div>
-      <div class="x-score" id="x-score">0</div>
-    </span>
-    <span>
-      <div class="label">Draws</div>
-      <div class="draw-score" id="draw-score">0</div>
-    </span>
-    <span>
-      <div class="label">O Wins</div>
-      <div class="o-score" id="o-score">0</div>
-    </span>
+    <div id="score">
+      <div class="score-card x-card">
+        <div class="score-label">Player X</div>
+        <div class="score-value" id="x-score">0</div>
+      </div>
+      <div class="score-vs">VS</div>
+      <div class="score-card draw-card">
+        <div class="score-label">Draws</div>
+        <div class="score-value" id="draw-score">0</div>
+      </div>
+      <div class="score-vs">VS</div>
+      <div class="score-card o-card">
+        <div class="score-label">Player O</div>
+        <div class="score-value" id="o-score">0</div>
+      </div>
+    </div>
+
+    <div class="turn-indicators">
+      <div class="turn-dot x-dot active" id="dot-x"></div>
+      <div class="turn-dot o-dot inactive" id="dot-o"></div>
+    </div>
+
+    <div id="status" class="x-turn">Player X's turn</div>
+
+    <div id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+
+    <button id="restart">New Game</button>
   </div>
-
-  <div id="status">Player X's turn</div>
-
-  <div id="board">
-    <div class="cell" data-index="0"></div>
-    <div class="cell" data-index="1"></div>
-    <div class="cell" data-index="2"></div>
-    <div class="cell" data-index="3"></div>
-    <div class="cell" data-index="4"></div>
-    <div class="cell" data-index="5"></div>
-    <div class="cell" data-index="6"></div>
-    <div class="cell" data-index="7"></div>
-    <div class="cell" data-index="8"></div>
-  </div>
-
-  <button id="restart">Restart</button>
 
   <script>
     const cells = document.querySelectorAll('.cell');
@@ -159,6 +392,8 @@
     const xScoreEl = document.getElementById('x-score');
     const oScoreEl = document.getElementById('o-score');
     const drawScoreEl = document.getElementById('draw-score');
+    const dotX = document.getElementById('dot-x');
+    const dotO = document.getElementById('dot-o');
 
     const WINS = [
       [0,1,2],[3,4,5],[6,7,8],
@@ -170,6 +405,11 @@
     let current = 'X';
     let gameOver = false;
     let scores = { X: 0, O: 0, draw: 0 };
+
+    function updateTurnDots() {
+      dotX.className = 'turn-dot x-dot ' + (current === 'X' ? 'active' : 'inactive');
+      dotO.className = 'turn-dot o-dot ' + (current === 'O' ? 'active' : 'inactive');
+    }
 
     function checkWinner() {
       for (const [a, b, c] of WINS) {
@@ -193,12 +433,16 @@
       const result = checkWinner();
       if (result) {
         gameOver = true;
+        dotX.className = 'turn-dot x-dot inactive';
+        dotO.className = 'turn-dot o-dot inactive';
         if (result.winner === 'draw') {
           status.textContent = "It's a draw!";
+          status.className = 'draw';
           scores.draw++;
           drawScoreEl.textContent = scores.draw;
         } else {
           status.textContent = `Player ${result.winner} wins!`;
+          status.className = 'win';
           scores[result.winner]++;
           if (result.winner === 'X') xScoreEl.textContent = scores.X;
           else oScoreEl.textContent = scores.O;
@@ -207,6 +451,8 @@
       } else {
         current = current === 'X' ? 'O' : 'X';
         status.textContent = `Player ${current}'s turn`;
+        status.className = current === 'X' ? 'x-turn' : 'o-turn';
+        updateTurnDots();
       }
     }
 
@@ -215,6 +461,8 @@
       current = 'X';
       gameOver = false;
       status.textContent = "Player X's turn";
+      status.className = 'x-turn';
+      updateTurnDots();
       cells.forEach(cell => {
         cell.textContent = '';
         cell.className = 'cell';
